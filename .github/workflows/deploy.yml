@@ -1,0 +1,32 @@
+name: CI - MLOps Credito
+
+on:
+  push:
+    branches: [ master, main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+
+    - name: Build imagen Docker
+      run: docker build -t mlops-credito .
+
+    - name: Test health endpoint
+      run: |
+        docker run -d -p 8000:8000 --name test-api mlops-credito
+        sleep 10
+        curl -f http://localhost:8000/ || exit 1
+        docker stop test-api
+
+    - name: Test endpoint predicción
+      run: |
+        docker run -d -p 8000:8000 --name test-pred mlops-credito
+        sleep 10
+        curl -X POST http://localhost:8000/predecir \
+          -H "Content-Type: application/json" \
+          -d '{"features": [0.5, 1.2, -0.3, 0.8, 1.5, -1.1, 0.2, 0.9, -0.4, 0.7]}'
+        docker stop test-pred

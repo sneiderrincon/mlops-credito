@@ -18,14 +18,22 @@ jobs:
     - name: Test health endpoint
       run: |
         docker run -d -p 8000:8000 --name test-api mlops-credito
-        sleep 25
-        curl -f http://localhost:8000/ || exit 1
+        for i in {1..30}; do
+          sleep 3
+          curl -sf http://localhost:8000/ && break
+          echo "Intento $i fallido, esperando..."
+        done
+        curl -f http://localhost:8000/
         docker stop test-api
 
     - name: Test endpoint predicción
       run: |
         docker run -d -p 8000:8000 --name test-pred mlops-credito
-        sleep 25
+        for i in {1..30}; do
+          sleep 3
+          curl -sf http://localhost:8000/ && break
+          echo "Intento $i fallido, esperando..."
+        done
         curl -X POST http://localhost:8000/predecir \
           -H "Content-Type: application/json" \
           -d '{"features": [0.5, 1.2, -0.3, 0.8, 1.5, -1.1, 0.2, 0.9, -0.4, 0.7]}'

@@ -1,4 +1,5 @@
-﻿name: CI - MLOps Credito
+﻿@"
+name: CI - MLOps Credito
 
 on:
   push:
@@ -22,6 +23,7 @@ jobs:
 
     - name: Test modelo
       run: |
+        mkdir -p models
         python -c "from app.model import train_and_save, predict; train_and_save(); r = predict([0.5, 1.2, -0.3, 0.8, 1.5, -1.1, 0.2, 0.9, -0.4, 0.7]); print(r); assert 'probabilidad' in r"
 
     - name: Build imagen Docker
@@ -29,3 +31,4 @@ jobs:
 
     - name: Verificar imagen
       run: docker images mlops-credito
+"@ | Out-File -FilePath .github\workflows\deploy.yml -Encoding utf8

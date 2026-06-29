@@ -1,4 +1,4 @@
-﻿@"
+﻿cat > .github/workflows/deploy.yml << 'EOF'
 name: CI - MLOps Credito
 
 on:
@@ -31,4 +31,4 @@ jobs:
 
     - name: Verificar imagen
       run: docker images mlops-credito
-"@ | Out-File -FilePath .github\workflows\deploy.yml -Encoding utf8
+EOF
